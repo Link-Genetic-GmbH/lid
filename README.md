@@ -35,8 +35,35 @@ maintained in [`/draft/draft-linkgenetic-lid-uri-00.md`](draft/draft-linkgenetic
 
 You can also convert it using [IETF Author Tools](https://author-tools.ietf.org/).
 
+This folder contains Internet-Draft source files for the proposed
+`lid:` URI scheme.
+
+## Why does the header look strange?
+
+The draft files (e.g. `draft-linkgenetic-lid-uri-00.md`) use a
+**YAML front-matter header** (`--- ... ---`) that is required by the
+IETF [kramdown-rfc](https://github.com/cabo/kramdown-rfc) toolchain.
+
+- On **GitHub**, this header is not recognized and is displayed like a
+  Markdown table.
+- This is expected and does **not** mean the draft is broken.
+- The draft is valid for the [IETF Author Tools](https://author-tools.ietf.org/).
+
+## How to render the draft
+
+You can generate `.txt` (official format), `.xml`, and `.html` versions
+from the Markdown source:
+
+### Option A: Online
+- Upload the `.md` file to [IETF Author Tools](https://author-tools.ietf.org/).
+
+### Option B: Local build
+
+pip install xml2rfc
+xml2rfc draft-linkgenetic-lid-uri-00.md --text --html
 
 ---
+
 
 ## 📖 Specification
 
@@ -67,3 +94,4 @@ Tests live under [`/tests`](tests/).
 We aim to provide **two independent implementations** and **Web Platform Tests (WPT)** for conformance.
 
 ---
+

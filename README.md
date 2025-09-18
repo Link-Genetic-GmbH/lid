@@ -27,6 +27,17 @@ and how it complements existing persistent identifier systems like DOI, ARK, or 
 
 ---
 
+
+## 📄 IETF Draft
+
+The current Internet-Draft for the proposed `lid:` URI scheme is
+maintained in [`/draft/draft-linkgenetic-lid-uri-00.md`](draft/draft-linkgenetic-lid-uri-00.md).
+
+You can also convert it using [IETF Author Tools](https://author-tools.ietf.org/).
+
+
+---
+
 ## 📖 Specification
 
 The Editor’s Draft is maintained in [`/spec/index.html`](spec/index.html).

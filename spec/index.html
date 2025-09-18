@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>LinkID — Persistent, Never‑Break Identifiers for the Web</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+  <script class="remove">
+    const respecConfig = {
+      specStatus: "CG-DRAFT", // Community Group draft while incubating
+      shortName: "linkid",
+      editors: [
+        { name: "Link Genetic GmbH", url: "https://linkgenetic.com/" }
+      ],
+      github: "https://github.com/linkgenetic/linkid-spec",
+      edDraftURI: "https://linkgenetic.github.io/linkid-spec/",
+      license: "w3c-software-doc",
+      xref: true,
+      group: "wicg",
+      lint: {"no-unused-dfns": false}
+    };
+  </script>
+  <style>
+    pre.algorithm { background: #f7f7f7; padding: 1rem; border-radius: 8px; overflow:auto }
+    code { white-space: pre-wrap; }
+    .issue { border-left: 4px solid #d00; padding-left: .6rem; }
+    .note { border-left: 4px solid #0a7; padding-left: .6rem; }
+  </style>
+</head>
+<body>
+  <section id="abstract">
+    <p><dfn data-lt="LinkID">LinkID</dfn> defines a persistent identifier and resolution mechanism for Web resources that remain stable even when the underlying locations change. It specifies identifier syntax, a resolver algorithm, metadata, caching semantics, and security and privacy requirements. LinkID can be expressed as an HTTP URI namespace (<code>https://w3id.org/linkid/&lt;id&gt;</code>) and, if standardized in the IETF, an optional <code>lid:</code> URI scheme.</p>
+  </section>
+
+  <section id="sotd">
+    <p>This Editor’s Draft is incubated in a Community Group and is not a W3C Recommendation. The design may change at any time. Implementors are encouraged to experiment and provide feedback.</p>
+  </section>
+
+  <section>
+    <h2>Goals and Non‑Goals</h2>
+    <ul>
+      <li>Provide stable identifiers that resolve to the current best resource ("never‑break" links).</li>
+      <li>Work with existing Web infrastructure (HTTP, DNS, caches, CDNs, archives).</li>
+      <li>Be simple to mint, resolve, and validate, with open governance.</li>
+    </ul>
+    <p><strong>Non‑goals:</strong> Hosting content, replacing all existing persistent identifier systems, or mandating a single global registry.</p>
+  </section>
+
+  <section>
+    <h2>Terminology</h2>
+    <dl>
+      <dt><dfn data-lt="LinkID identifier">LinkID</dfn></dt>
+      <dd>A persistent identifier string that uniquely names a target resource over time.</dd>
+      <dt><dfn>Resolver</dfn></dt>
+      <dd>A network service that maps a LinkID to one or more <em>resolution records</em> and performs redirects or returns metadata.</dd>
+      <dt><dfn>Resolution Record</dfn></dt>
+      <dd>A record containing a dereferenceable <a data-cite="RFC3986">URI</a> plus metadata (status, quality, media type, language, freshness, checksum, validity interval, etc.).</dd>
+      <dt><dfn>Resolution Policy</dfn></dt>
+      <dd>A deterministic strategy for selecting a current best record among candidates, given <a>request parameters</a> and <a>client preferences</a>.</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Identifier Syntax</h2>
+    <section>
+      <h3>HTTP Form (Recommended)</h3>
+      <p>A LinkID is represented as an HTTPS URI under a persistent namespace, e.g.,</p>
+      <pre><code>https://w3id.org/linkid/{id}
+https://example.org/lid/{id}</code></pre>
+      <p>where <code>{id}</code> is a case‑insensitive, URL‑safe string of 32–64 characters, typically a UUID (lowercase, no dashes), a cryptographic hash, or a registry‑assigned opaque identifier.</p>
+    </section>
+    <section>
+      <h3>Optional <code>lid:</code> Scheme</h3>
+      <p>If standardized via IETF and registered with IANA, LinkID MAY be expressed as:</p>
+      <pre><code>lid:{id}
+lid:{id}?q=...
+</code></pre>
+      <p>where URI scheme conformance and percent‑encoding follow <a data-cite="RFC3986">RFC 3986</a>. A <code>lid:</code> URI resolves via <a>LinkID Resolution</a> using a discovery step (e.g., well‑known, HTTPS bootstrap, or DNS SRV).</p>
+      <div class="issue">Open: finalize <code>{id}</code> length/charset and collision‑resistance requirements; align with URI scheme registration if pursued.</div>
+    </section>
+  </section>
+
+  <section>
+    <h2>Data Model</h2>
+    <pre><code class="language-json">{
+  "id": "b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14",
+  "created": "2025-07-01T12:00:00Z",
+  "issuer": "https://registry.example.org",
+  "records": [
+    {
+      "uri": "https://content.example.org/v/3/paper.pdf",
+      "status": "active",
+      "mediaType": "application/pdf",
+      "lang": "en",
+      "quality": 0.92,
+      "validFrom": "2025-07-10T00:00:00Z",
+      "validUntil": null,
+      "checksum": {"alg": "sha256", "value": "..."},
+      "metadata": {"title": "...", "version": "3"}
+    }
+  ],
+  "signatures": [
+    { "alg": "eddsa", "publicKey": "...", "signature": "..." }
+  ]
+}</code></pre>
+    <p>Fields are extensible. Implementations MUST ignore unknown fields.</p>
+  </section>
+
+  <section>
+    <h2>LinkID Resolution</h2>
+    <section>
+      <h3>Inputs</h3>
+      <ul>
+        <li>The <a>LinkID</a> to resolve.</li>
+        <li>Request parameters (e.g., <code>Accept</code> headers, <code>Accept-Language</code>, <code>Prefer</code>, feature hints like <code>format=html|pdf|json</code>).</li>
+        <li>Resolver configuration and <a>Resolution Policy</a>.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Outputs</h3>
+      <ul>
+        <li>HTTP 3xx redirect to the selected record’s <code>uri</code>, or</li>
+        <li>HTTP 200 with a JSON body (Content‑Negotiation) describing candidate records.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Algorithm (Normative)</h3>
+      <p>The following algorithm is normative. Pseudocode is illustrative.</p>
+      <pre class="algorithm"><code>Given: LinkID L, HTTP request R
+Result: A redirect to the best current resource, or a JSON description
+
+1. Normalize L
+   1.1 If L is in lid: form, bootstrap to an HTTPS resolver endpoint E via:
+       a) well‑known: https://{authority}/.well-known/linkid
+       b) or static mapping table maintained by the client (MUST be updateable)
+       c) or DNS discovery (e.g., _linkid._tcp)
+   1.2 If L is already an HTTPS LinkID URI, set E := origin(L)
+
+2. Fetch resolution document D from E
+   2.1 Request: GET {E}/resolve/{id} with request headers from R
+   2.2 On 200 OK with JSON body, validate:
+       a) D.id equals {id};
+       b) signatures (if present) verify against trusted keys;
+       c) current time ∈ [validFrom, validUntil) if provided.
+   2.3 On failure, proceed to fallback (Step 6)
+
+3. Candidate selection
+   3.1 Filter records by media type using R's Accept header and explicit query hints.
+   3.2 Filter by language using Accept-Language and content metadata.
+   3.3 Discard records with status ≠ active or outside validity interval.
+   3.4 Rank remaining by (policy): quality score, freshness, checksum match, publisher trust, etc.
+
+4. Produce response
+   4.1 If at least one candidate remains:
+       a) If R prefers redirect (default), issue 302 (or 307/308 as configured) to top candidate.uri;
+       b) Else return 200 with application/linkid+json body containing ordered candidates.
+   4.2 Set Cache-Control according to Section “Caching”.
+   4.3 Include Link headers (rel="canonical", rel="alternate", rel="describedby") as applicable.
+
+5. Telemetry (Optional)
+   5.1 If enabled and consented, record resolution metrics (success/failure, latency) without personal data.
+
+6. Fallback
+   6.1 Attempt secondary resolvers listed in D (if partially available) or configured in E.
+   6.2 If no resolver can provide candidates, return 404 LinkID Not Found with diagnostics.
+</code></pre>
+    </section>
+  </section>
+
+  <section>
+    <h2>HTTP API</h2>
+    <p>Resolvers MUST expose an HTTPS API. A minimal interface:</p>
+    <pre><code>GET /resolve/{id}
+Accept: application/linkid+json, application/json, */*
+
+200 OK
+Content-Type: application/linkid+json
+{ "id": "...", "records": [ ... ], "policy": { ... } }
+
+302 Found
+Location: https://current.example.org/path
+Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
+</code></pre>
+    <p>Resolvers SHOULD also expose a <code>/.well-known/linkid</code> document that advertises the resolution endpoint, policies, and keys.</p>
+  </section>
+
+  <section>
+    <h2>Caching</h2>
+    <ul>
+      <li>Resolvers SHOULD set <code>Cache-Control: max-age</code> reflective of mapping volatility.</li>
+      <li>Clients MAY cache successful resolutions keyed by <code>{id}</code> and <code>Vary</code> on <code>Accept</code>/<code>Accept-Language</code>.</li>
+      <li>Use <code>ETag</code> and <code>Last-Modified</code> on resolution JSON to support conditional GET.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Error Handling</h2>
+    <table>
+      <thead><tr><th>HTTP</th><th>Error</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>404</td><td>LinkID Not Found</td><td>No record exists for the given ID.</td></tr>
+        <tr><td>409</td><td>Conflict</td><td>Multiple authoritative mappings detected; client MAY fetch JSON to disambiguate.</td></tr>
+        <tr><td>410</td><td>Gone</td><td>Identifier intentionally retired; JSON SHOULD include <code>tombstone</code> info.</td></tr>
+        <tr><td>451</td><td>Unavailable For Legal Reasons</td><td>Resolver is legally restricted from redirecting.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Security Considerations</h2>
+    <ul>
+      <li><strong>Integrity:</strong> Sign resolution documents; pin resolver keys; verify checksums of target content when available.</li>
+      <li><strong>Abuse:</strong> Phishing/malware: integrate Safe Browsing; rate-limit; audit changes; maintain allow/deny lists.</li>
+      <li><strong>Downgrade:</strong> Require HTTPS everywhere; use HSTS; prefer 307/308 to preserve methods.</li>
+      <li><strong>Authorization:</strong> Private mappings MUST NOT leak via error messages or side channels.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Privacy Considerations</h2>
+    <ul>
+      <li>No personal data in identifiers; avoid embedding semantics in <code>{id}</code>.</li>
+      <li>Telemetry MUST be opt‑in and aggregated; provide clear retention policies.</li>
+      <li>Document data processors/sub‑processors for compliance (e.g., GDPR).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Internationalization & Accessibility</h2>
+    <ul>
+      <li>Language negotiation for records; <code>lang</code> tag on metadata.</li>
+      <li>Expose human‑readable error pages with accessible markup when not redirecting.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Versioning</h2>
+    <p>Identifiers are stable. Mappings evolve. Use metadata field <code>version</code> and keep immutable history. Provide <code>?at=</code> query to resolve as of a past timestamp.</p>
+  </section>
+
+  <section>
+    <h2>Interoperability and Co‑existence</h2>
+    <ul>
+      <li>Cross‑link with DOI/ARK/Handle by storing them as alternate records.</li>
+      <li>Publish content hashes to support verification and de‑duplication.</li>
+      <li>Encourage archives to mirror targets; store archive URLs as backup records.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Conformance</h2>
+    <p>Two classes are defined:</p>
+    <ol>
+      <li><strong>LinkID Resolver</strong> — implements the HTTP API and the resolution algorithm.</li>
+      <li><strong>LinkID Client</strong> — constructs LinkIDs, sends requests, follows redirects, and optionally validates metadata/signatures.</li>
+    </ol>
+    <p>Normative requirements are expressed using the keywords in <a data-cite="RFC2119">RFC 2119</a>.</p>
+  </section>
+
+  <section>
+    <h2>Security & Privacy Self‑Review</h2>
+    <p>See <a href="https://w3ctag.github.io/security-questionnaire/">Self‑Review Questionnaire: Security and Privacy</a>. A filled questionnaire will be linked here before wide review.</p>
+  </section>
+
+  <section>
+    <h2>Registry and Governance</h2>
+    <ul>
+      <li>Define an open, federated registry model with verifiable issuers.</li>
+      <li>Document change control, dispute resolution, and export procedures.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Examples</h2>
+    <pre><code>// HTTP form
+https://w3id.org/linkid/b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14
+→ 308 Permanent Redirect → https://content.example.org/v/3/paper.pdf
+
+// lid: form (if registered)
+lid:b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14
+→ discover resolver → redirect
+
+// JSON resolution
+GET https://resolver.example.org/resolve/b2f6...
+Accept: application/linkid+json
+200 OK
+{ "id":"b2f6...", "records":[ {"uri":"https://.../v/3/paper.pdf", "quality":0.92 } ] }
+</code></pre>
+  </section>
+
+  <section>
+    <h2>Change Log</h2>
+    <ul>
+      <li>2025‑09‑16: Initial Editor’s Draft skeleton with normative resolution algorithm.</li>
+    </ul>
+  </section>
+</body>
+</html>

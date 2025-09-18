@@ -19,8 +19,10 @@ It complements existing systems (DOI, ARK, Handle) but is designed for general u
 
 ## 📖 Specification
 
-The Editor’s Draft is maintained in [`/spec`](spec/).  
-Latest build: [linkgenetic.github.io/lid/spec](https://linkgenetic.github.io/lid/spec/)
+The Editor’s Draft is maintained in [`/spec/index.html`](spec/index.html).
+
+➡️ For a human-friendly introduction, please see the [Explainer](docs/explainer.md).
+
 
 ---
 

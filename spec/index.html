@@ -264,10 +264,59 @@ Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
 
   <section>
     <h2>Registry and Governance</h2>
+    <section>
+      <h3>Federated Registry Model</h3>
+      <p>LinkID supports a federated registry architecture where multiple organizations can operate resolver services:</p>
+      <ul>
+        <li><strong>Primary Registry:</strong> Canonical resolver at <code>https://resolver.linkid.org/</code></li>
+        <li><strong>Institutional Resolvers:</strong> Organizations may operate their own resolvers for domain-specific identifiers</li>
+        <li><strong>Mirror Resolvers:</strong> Geographic or organizational mirrors for redundancy</li>
+        <li><strong>Archive Resolvers:</strong> Specialized resolvers for archived content</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Governance Model</h3>
+      <ul>
+        <li><strong>Standards Body:</strong> W3C Community Group for specification development</li>
+        <li><strong>Registry Authority:</strong> Multi-stakeholder governance board</li>
+        <li><strong>Technical Working Group:</strong> Implementation and interoperability</li>
+        <li><strong>Security Working Group:</strong> Threat assessment and mitigation</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Issuer Verification</h3>
+      <p>Resolver registration requires:</p>
+      <ol>
+        <li>Domain ownership verification</li>
+        <li>Public key registration for signature verification</li>
+        <li>Compliance with resolver API specification</li>
+        <li>Agreement to governance policies</li>
+      </ol>
+    </section>
+  </section>
+
+  <section>
+    <h2>Sustainability and Environmental Impact</h2>
+    <p>LinkID contributes to digital sustainability by:</p>
     <ul>
-      <li>Define an open, federated registry model with verifiable issuers.</li>
-      <li>Document change control, dispute resolution, and export procedures.</li>
+      <li><strong>Reducing Link Rot:</strong> Stable identifiers prevent repeated searches for moved content</li>
+      <li><strong>Minimizing Duplication:</strong> Canonical references reduce redundant storage</li>
+      <li><strong>Optimizing Traffic:</strong> Intelligent caching reduces unnecessary network requests</li>
+      <li><strong>Measuring Impact:</strong> Optional telemetry tracks avoided CO₂ emissions</li>
     </ul>
+    <section>
+      <h3>Carbon Impact Measurement</h3>
+      <p>Resolvers MAY include carbon impact data in telemetry:</p>
+      <pre><code>{
+  "telemetry": {
+    "resolutions": 1000000,
+    "successful_redirects": 950000,
+    "avoided_searches": 285000,
+    "estimated_co2_saved_kg": 142.5,
+    "period": "2025-07-01/2025-07-31"
+  }
+}</code></pre>
+    </section>
   </section>
 
   <section>

@@ -83,8 +83,46 @@ Reference resolvers:
 
 Client SDKs:
 - [`sdk/js`](sdk/js) — JavaScript client
-- [`sdk/java`](sdk/java) — Java client
-- [`sdk/python`](sdk/python) — Python client
+- [`sdk/java`](sdk/java) — Java client (sample implementation)
+- [`sdk/python`](sdk/python) — Python client (sample implementation)
+
+### Sample client usage
+
+Python (`sdk/python`):
+
+```python
+# pip install -r sdk/python/requirements.txt
+from sdk.python import LinkIDClient
+
+client = LinkIDClient()
+result = client.resolve("b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14", metadata=True)
+
+if hasattr(result, "uri"):
+    print("Redirect to", result.uri)
+else:
+    print("Metadata payload", result.data)
+```
+
+Java (`sdk/java`):
+
+```java
+// mvn -f sdk/java/pom.xml package
+import org.linkgenetic.linkid.LinkIdClient;
+import org.linkgenetic.linkid.LinkIdClient.ResolveOptions;
+
+LinkIdClient client = LinkIdClient.builder().build();
+LinkIdClient.ResolutionResult result = client.resolve(
+    "b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14",
+    ResolveOptions.builder().metadata(true).build()
+);
+
+switch (result) {
+    case LinkIdClient.RedirectResolution redirect -> System.out.println("Redirect to " + redirect.uri());
+    case LinkIdClient.MetadataResolution metadata -> System.out.println("Metadata: " + metadata.metadata());
+    default -> System.out.println("Unknown result type");
+}
+```
+
 
 ---
 
@@ -94,4 +132,3 @@ Tests live under [`/tests`](tests/).
 We aim to provide **two independent implementations** and **Web Platform Tests (WPT)** for conformance.
 
 ---
-

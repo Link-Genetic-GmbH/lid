@@ -1,0 +1,35 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/linkid}
+
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+
+logging:
+  level:
+    org.linkgenetic.resolver: INFO
+    org.springframework: WARN
+    org.mongodb: WARN
+  file:
+    name: /var/log/linkid-resolver/application.log
+
+linkid:
+  resolver:
+    rate-limit:
+      enabled: true
+      requests-per-minute: 200
+      requests-per-hour: 5000
+
+    cache:
+      enabled: true
+      default-ttl: 7200
+      max-entries: 1000000
+
+    security:
+      require-auth: true
+      jwt-secret: ${JWT_SECRET}
+      jwt-expiration-hours: 8

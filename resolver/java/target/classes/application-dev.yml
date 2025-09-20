@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: linkid_dev
+
+    redis:
+      host: localhost
+      port: 6379
+      database: 1
+
+logging:
+  level:
+    org.linkgenetic.resolver: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
+linkid:
+  resolver:
+    rate-limit:
+      enabled: false
+
+    cache:
+      enabled: true
+      default-ttl: 300
+      max-entries: 1000
+
+    security:
+      require-auth: false

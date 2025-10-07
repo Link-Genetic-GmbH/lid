@@ -57,6 +57,16 @@
       <dd>A record containing a dereferenceable <a data-cite="RFC3986">URI</a> plus metadata (status, quality, media type, language, freshness, checksum, validity interval, etc.).</dd>
       <dt><dfn>Resolution Policy</dfn></dt>
       <dd>A deterministic strategy for selecting a current best record among candidates, given <a>request parameters</a> and <a>client preferences</a>.</dd>
+      <dt><dfn>Issuer</dfn></dt>
+      <dd>An entity that mints LinkIDs and is accountable for the associated records and their authenticity.</dd>
+      <dt><dfn>Registry</dfn></dt>
+      <dd>An authoritative database (or federated set of databases) operated by one or more issuers/resolvers maintaining LinkID metadata and history.</dd>
+      <dt><dfn>Resolution Document</dfn></dt>
+      <dd>The JSON resource (media type <code>application/linkid+json</code>) returned by a resolver that describes a LinkID, its records, policy, and optional signatures.</dd>
+      <dt><dfn>Well‑Known Document</dfn></dt>
+      <dd>A discovery document at <code>/.well-known/linkid</code> per <a data-cite="RFC8615">RFC&nbsp;8615</a> that advertises resolver endpoints, capabilities, and keys.</dd>
+      <dt><dfn>Webhook</dfn></dt>
+      <dd>An HTTPS callback configured by integrators to receive event notifications (e.g., record added/retired) from a resolver/registry.</dd>
     </dl>
   </section>
 
@@ -68,6 +78,7 @@
       <pre><code>https://w3id.org/linkid/{id}
 https://example.org/lid/{id}</code></pre>
       <p>where <code>{id}</code> is a case‑insensitive, URL‑safe string of 32–64 characters, typically a UUID (lowercase, no dashes), a cryptographic hash, or a registry‑assigned opaque identifier.</p>
+      <p>Resolvers SHOULD publish <code>/.well-known/linkid</code> to declare their resolution base and keys. The canonical JSON representation of a LinkID uses media type <code>application/linkid+json</code> (see “IANA Considerations”).</p>
     </section>
     <section>
       <h3>Optional <code>lid:</code> Scheme</h3>
@@ -75,7 +86,7 @@ https://example.org/lid/{id}</code></pre>
       <pre><code>lid:{id}
 lid:{id}?q=...
 </code></pre>
-      <p>where URI scheme conformance and percent‑encoding follow <a data-cite="RFC3986">RFC 3986</a>. A <code>lid:</code> URI resolves via <a>LinkID Resolution</a> using a discovery step (e.g., well‑known, HTTPS bootstrap, or DNS SRV).</p>
+      <p>where URI scheme conformance and percent‑encoding follow <a data-cite="RFC3986">RFC 3986</a>. A <code>lid:</code> URI resolves via <a>LinkID Resolution</a> using a discovery step (e.g., well‑known, HTTPS bootstrap, or DNS SRV). If the <code>lid:</code> scheme proceeds, an IANA URI Scheme registration is REQUIRED (see “IANA Considerations”).</p>
       <div class="issue">Open: finalize <code>{id}</code> length/charset and collision‑resistance requirements; align with URI scheme registration if pursued.</div>
     </section>
   </section>
@@ -104,6 +115,14 @@ lid:{id}?q=...
   ]
 }</code></pre>
     <p>Fields are extensible. Implementations MUST ignore unknown fields.</p>
+    <section>
+      <h3>Media Type and JSON Schema</h3>
+      <p>The resolution document is identified by media type <code>application/linkid+json</code> (to be registered with IANA). A normative JSON Schema will be published under the specification repository and versioned alongside the spec. Schema validation is RECOMMENDED for producers and consumers.</p>
+      <ul>
+        <li><strong>Compatibility:</strong> Producers MAY include additional properties; consumers MUST ignore unknown properties.</li>
+        <li><strong>Signatures:</strong> If present, signatures SHOULD follow JSON Web Signature (JWS) detached payload conventions or COSE, with algorithm identifiers from the relevant registries.</li>
+      </ul>
+    </section>
   </section>
 
   <section>
@@ -165,6 +184,7 @@ Result: A redirect to the best current resource, or a JSON description
    6.2 If no resolver can provide candidates, return 404 LinkID Not Found with diagnostics.
 </code></pre>
     </section>
+      <p>Behavior MUST conform to HTTP Semantics (<a data-cite="RFC9110">RFC&nbsp;9110</a>) including content negotiation and caching. Clients MAY indicate <code>Prefer: return=representation</code> to obtain JSON instead of redirect.</p>
   </section>
 
   <section>
@@ -182,6 +202,56 @@ Location: https://current.example.org/path
 Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
 </code></pre>
     <p>Resolvers SHOULD also expose a <code>/.well-known/linkid</code> document that advertises the resolution endpoint, policies, and keys.</p>
+    <section>
+      <h3>Extended Endpoints</h3>
+      <pre><code>GET /.well-known/linkid
+200 OK
+Content-Type: application/json
+{ "issuer": "https://resolver.example.org", "resolve": "/resolve/{id}", "keys": [ ... ], "policy": { ... } }
+
+GET /records/{id}
+200 OK
+Content-Type: application/linkid+json
+{ "id": "...", "records": [ ... ] }
+
+POST /register
+Authorization: Bearer ...
+Content-Type: application/json
+{ "id": "...", "records": [ ... ] }
+201 Created
+Location: /records/{id}
+
+POST /records/{id}
+Authorization: Bearer ...
+Idempotency-Key: 123e4567-e89b-12d3-a456-426614174000
+Content-Type: application/json
+{ "op": "add|retire|update", "record": { ... } }
+200 OK
+
+DELETE /records/{id}
+Authorization: Bearer ...
+204 No Content
+</code></pre>
+      <p>Protected endpoints SHOULD use OAuth&nbsp;2.0 or mTLS. Servers MUST implement idempotency for mutation endpoints using an <code>Idempotency-Key</code> header.</p>
+    </section>
+    <section>
+      <h3>Webhooks</h3>
+      <p>Registries MAY emit events to integrator-managed HTTPS endpoints for operational integration (e.g., repository automation, ticketing systems).</p>
+      <ul>
+        <li><strong>Events:</strong> <code>linkid.record.created</code>, <code>linkid.record.updated</code>, <code>linkid.record.retired</code>, <code>linkid.identifier.withdrawn</code>.</li>
+        <li><strong>Delivery:</strong> POST with <code>Content-Type: application/json</code>; include <code>LinkID-Signature</code> header (HMAC or Ed25519) for verification.</li>
+        <li><strong>Retries:</strong> Exponential backoff; at-least-once delivery; include <code>event_id</code> and <code>retry</code> count.</li>
+      </ul>
+      <pre><code>{
+  "event": "linkid.record.updated",
+  "event_id": "01J8Z8K9H6...",
+  "occurred_at": "2025-10-07T12:34:56Z",
+  "id": "b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14",
+  "change": { "op": "update", "record": { "uri": "https://.../v/4/paper.pdf", "quality": 0.95 } },
+  "actor": { "issuer": "https://resolver.example.org" }
+}
+</code></pre>
+    </section>
   </section>
 
   <section>
@@ -191,6 +261,11 @@ Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
       <li>Clients MAY cache successful resolutions keyed by <code>{id}</code> and <code>Vary</code> on <code>Accept</code>/<code>Accept-Language</code>.</li>
       <li>Use <code>ETag</code> and <code>Last-Modified</code> on resolution JSON to support conditional GET.</li>
     </ul>
+    <p>Recommended headers for JSON responses:</p>
+    <pre><code>Cache-Control: public, max-age=300
+ETag: "W/\"abc123\""
+Vary: Accept, Accept-Language
+</code></pre>
   </section>
 
   <section>
@@ -204,6 +279,12 @@ Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
         <tr><td>451</td><td>Unavailable For Legal Reasons</td><td>Resolver is legally restricted from redirecting.</td></tr>
       </tbody>
     </table>
+    <p>Errors SHOULD use Problem Details for HTTP APIs (<a data-cite="RFC9457">RFC&nbsp;9457</a>):</p>
+    <pre><code>HTTP/1.1 404 Not Found
+Content-Type: application/problem+json
+
+{ "type": "about:blank", "title": "LinkID Not Found", "status": 404, "detail": "No record for id b2f6...", "instance": "/resolve/b2f6..." }
+</code></pre>
   </section>
 
   <section>
@@ -214,6 +295,11 @@ Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
       <li><strong>Downgrade:</strong> Require HTTPS everywhere; use HSTS; prefer 307/308 to preserve methods.</li>
       <li><strong>Authorization:</strong> Private mappings MUST NOT leak via error messages or side channels.</li>
     </ul>
+    <ul>
+      <li><strong>Key Management:</strong> Rotate signing keys; publish <code>jwks.json</code> via well-known; include <code>kid</code> in signatures.</li>
+      <li><strong>Replay Protection:</strong> Require timestamps and nonces on webhook signatures; reject stale messages.</li>
+      <li><strong>Change Control:</strong> Enforce multi-party review (e.g., CODEOWNERS) for record changes; keep an immutable audit log.</li>
+    </ul>
   </section>
 
   <section>
@@ -223,6 +309,7 @@ Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
       <li>Telemetry MUST be opt‑in and aggregated; provide clear retention policies.</li>
       <li>Document data processors/sub‑processors for compliance (e.g., GDPR).</li>
     </ul>
+    <p>Logs SHOULD exclude IP addresses unless strictly necessary and, if retained, MUST be minimized and access-controlled. Provide DSR (data subject request) procedures for any telemetry that could be linked to individuals.</p>
   </section>
 
   <section>
@@ -231,11 +318,13 @@ Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
       <li>Language negotiation for records; <code>lang</code> tag on metadata.</li>
       <li>Expose human‑readable error pages with accessible markup when not redirecting.</li>
     </ul>
+    <p>Language tags MUST conform to <a data-cite="BCP47">BCP&nbsp;47</a>. Error pages SHOULD meet WCAG&nbsp;2.2 AA where applicable.</p>
   </section>
 
   <section>
     <h2>Versioning</h2>
     <p>Identifiers are stable. Mappings evolve. Use metadata field <code>version</code> and keep immutable history. Provide <code>?at=</code> query to resolve as of a past timestamp.</p>
+    <p>Resolvers SHOULD retain historical records and make them queryable for audit and reproducibility. <code>?at=</code> MUST use an ISO&nbsp;8601 timestamp in UTC.</p>
   </section>
 
   <section>
@@ -245,6 +334,7 @@ Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
       <li>Publish content hashes to support verification and de‑duplication.</li>
       <li>Encourage archives to mirror targets; store archive URLs as backup records.</li>
     </ul>
+    <p>Use existing <code>Link</code> relations where possible (<code>canonical</code>, <code>alternate</code>, <code>describedby</code>). When mapping to other PID systems, include scheme-specific metadata (e.g., DOI suffix) within <code>metadata</code> for cross-system reconciliation.</p>
   </section>
 
   <section>
@@ -255,11 +345,45 @@ Link: &lt;https://w3id.org/linkid/{id}&gt;; rel="canonical"
       <li><strong>LinkID Client</strong> — constructs LinkIDs, sends requests, follows redirects, and optionally validates metadata/signatures.</li>
     </ol>
     <p>Normative requirements are expressed using the keywords in <a data-cite="RFC2119">RFC 2119</a>.</p>
+    <p>An open conformance test suite will be maintained in the specification repository. Implementers SHOULD publish implementation reports and participate in interop events. Minimum conformance for a Resolver includes: HTTPS endpoints, <code>/.well-known/linkid</code>, <code>GET /resolve/{id}</code>, correct algorithmic filtering, and correct cache semantics.</p>
   </section>
 
   <section>
     <h2>Security & Privacy Self‑Review</h2>
     <p>See <a href="https://w3ctag.github.io/security-questionnaire/">Self‑Review Questionnaire: Security and Privacy</a>. A filled questionnaire will be linked here before wide review.</p>
+  </section>
+
+  <section>
+    <h2>IANA Considerations</h2>
+    <ul>
+      <li><strong>Media Type:</strong> Register <code>application/linkid+json</code> under the IANA Media Types registry. Security considerations: documents may be signed; do not assume confidentiality.</li>
+      <li><strong>Well‑Known URI:</strong> Register <code>linkid</code> in the Well-Known URI registry (<a data-cite="RFC8615">RFC&nbsp;8615</a>) pointing to a JSON document describing resolver capabilities.</li>
+      <li><strong>URI Scheme (Optional):</strong> If pursued, register <code>lid</code> in the URI Schemes registry with resolution via HTTPS bootstrap.</li>
+      <li><strong>Problem Types:</strong> Optionally register <code>https://linkid.org/problems/*</code> identifiers for common error conditions.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Operational Integration with Repositories & Tracking</h2>
+    <p>To integrate LinkID into existing software delivery, issue tracking, and repository workflows:</p>
+    <ul>
+      <li><strong>Source Repositories:</strong> Maintain LinkID registry configuration and policy in version control (e.g., <code>policy.yaml</code>, <code>/.well-known/linkid</code> content). Require reviewed changes via CODEOWNERS.</li>
+      <li><strong>Issue Trackers:</strong> Emit webhooks to create/update tickets on record lifecycle events (e.g., Jira, GitHub Issues). Include <code>id</code>, change summary, and links to diffs.</li>
+      <li><strong>CI/CD:</strong> Validate resolution JSON against schema and run conformance tests as part of pipelines; block on failures.</li>
+      <li><strong>Observability:</strong> Export OpenTelemetry spans for resolution requests and webhook deliveries; include <code>linkid.id</code> as an attribute.</li>
+      <li><strong>SBOM & Compliance:</strong> Record resolver and registry versions in deployment artifacts; keep an audit trail of mapping changes.</li>
+    </ul>
+    <pre><code>// Example webhook payload for ticketing automation
+{
+  "event": "linkid.record.created",
+  "id": "b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14",
+  "summary": "Added HTML variant (en) with quality 0.8",
+  "links": {
+    "records": "https://resolver.example.org/records/b2f6...",
+    "diff": "https://git.example.org/registry/commit/abc123"
+  }
+}
+</code></pre>
   </section>
 
   <section>
@@ -341,6 +465,7 @@ Accept: application/linkid+json
     <h2>Change Log</h2>
     <ul>
       <li>2025‑09‑16: Initial Editor’s Draft skeleton with normative resolution algorithm.</li>
+      <li>2025‑10‑07: Expanded standardization details, extended HTTP API + webhooks, repository/tracking integration, and examples.</li>
     </ul>
   </section>
 </body>

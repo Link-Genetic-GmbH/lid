@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>LinkID — Patent Alignment & Use Cases (Non‑Normative)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+  <script class="remove">
+    const respecConfig = {
+      specStatus: "CG-DRAFT",
+      shortName: "linkid-patent-alignment",
+      editors: [
+        { name: "Link Genetic GmbH", url: "https://linkgenetic.com/" }
+      ],
+      github: "https://github.com/linkgenetic/linkid-spec",
+      edDraftURI: "https://linkgenetic.github.io/linkid-spec/patent-alignment",
+      license: "w3c-software-doc",
+      xref: true,
+      group: "wicg",
+      lint: {"no-unused-dfns": false}
+    };
+  </script>
+  <style>
+    pre.algorithm { background: #f7f7f7; padding: 1rem; border-radius: 8px; overflow:auto }
+    code { white-space: pre-wrap; }
+    .issue { border-left: 4px solid #d00; padding-left: .6rem; }
+    .note { border-left: 4px solid #0a7; padding-left: .6rem; }
+  </style>
+</head>
+<body>
+  <section id="abstract">
+    <p>This non‑normative companion summarizes how the LinkID specification aligns with patent <strong>P220889 – System and Method for Resilient Identification and Management of Hyperlinks</strong> and consolidates illustrative use cases derived from the patent text. It is intended to help implementers and reviewers understand scope and intent; it does not add normative requirements.</p>
+  </section>
+
+  <section>
+    <h2>Status of This Document</h2>
+    <p>This page is informative. For normative behavior, see the main specification: <a href="index.html">LinkID — Persistent, Never‑Break Identifiers for the Web</a>.</p>
+  </section>
+
+  <section>
+    <h2>Patent‑to‑Spec Alignment</h2>
+    <p>The patent describes a system comprising a LinkID generator, a source registry, a destination registry, a LinkID mapping module, and a resolver that may employ semantic methods. These concepts correspond to sections in the LinkID specification as follows.</p>
+    <table>
+      <thead><tr><th>Patent component</th><th>Spec mapping</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>LinkID generator (UUID/hash/AI signature)</td>
+          <td><a href="index.html#identifier-syntax">Identifier Syntax</a> (id format); <a href="index.html#data-model">Data Model</a> (<code>id</code> field)</td>
+        </tr>
+        <tr>
+          <td>Source/Destination registries; bidirectional queries</td>
+          <td><a href="index.html#data-model">Data Model</a> (<code>records</code>, metadata); <a href="index.html#http-api">HTTP API</a> (<code>/records/{id}</code>, mutations)</td>
+        </tr>
+        <tr>
+          <td>LinkID mapping module</td>
+          <td><a href="index.html#linkid-resolution">LinkID Resolution</a> (candidate selection, policy); <a href="index.html#caching">Caching</a></td>
+        </tr>
+        <tr>
+          <td>Resolver module with semantic fallback</td>
+          <td><a href="index.html#linkid-resolution">Resolution Algorithm</a> (normative flow, fallbacks); <a href="index.html#error-handling">Error Handling</a></td>
+        </tr>
+        <tr>
+          <td>Security, auditability, governance</td>
+          <td><a href="index.html#security-considerations">Security Considerations</a>; <a href="index.html#registry-and-governance">Registry and Governance</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">The main specification deliberately expresses behavior in Web‑native terms (HTTP, media types, well‑known discovery). Semantic or AI‑assisted replacement is treated as an implementation detail within policy and fallback, without imposing specific models.</div>
+  </section>
+
+  <section>
+    <h2>Identifier Forms</h2>
+    <ul>
+      <li><strong>HTTP form (recommended):</strong> <code>https://w3id.org/linkid/{id}</code> or an issuer‑scoped base. See <a href="index.html#identifier-syntax">Identifier Syntax</a>.</li>
+      <li><strong>Optional <code>lid:</code> scheme:</strong> If standardized via IETF, <code>lid:{id}</code> resolves via HTTPS bootstrap. The main spec documents this as optional and non‑blocking.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Illustrative Use Cases</h2>
+    <ol>
+      <li><strong>Enterprise documents (PDF/Word):</strong> Embed LinkIDs instead of direct URLs. Resolutions remain stable across migrations; archived or alternate targets can be selected by policy.</li>
+      <li><strong>Web site restructuring:</strong> CMS replaces paths; existing LinkIDs continue to redirect to current canonical locations.</li>
+      <li><strong>Long‑term archiving:</strong> Archives maintain historical records; <code>?at=</code> enables time‑based resolution for audits/reproducibility.</li>
+      <li><strong>API integration:</strong> Third‑party systems register/update records via HTTPS APIs; idempotent mutations, webhooks for lifecycle events.</li>
+      <li><strong>ECM systems (e.g., SharePoint/AEM):</strong> Automatic minting on save; resolver validates availability and selects alternates on failure.</li>
+      <li><strong>Offline media (QR, print):</strong> LinkIDs in print resolve to current best resources when scanned.</li>
+    </ol>
+    <p>See also <a href="index.html#examples">Examples</a> and <a href="index.html#http-api">HTTP API</a> for concrete exchanges.</p>
+  </section>
+
+  <section>
+    <h2>Sustainability</h2>
+    <p>By reducing link rot, minimizing duplication, and enabling effective caching, LinkID supports digital sustainability goals. See <a href="index.html#sustainability-and-environmental-impact">Sustainability and Environmental Impact</a> for recommended telemetry and measurements.</p>
+  </section>
+
+  <section>
+    <h2>Security & Governance Notes</h2>
+    <ul>
+      <li>Sign resolution documents and verify checksums when available (<a href="index.html#security-considerations">Security Considerations</a>).</li>
+      <li>Operate within a federated registry model with issuer verification (<a href="index.html#registry-and-governance">Registry and Governance</a>).</li>
+      <li>Use <code>/.well-known/linkid</code> to advertise resolver capabilities and keys (<a href="index.html#http-api">HTTP API</a>).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Change Log</h2>
+    <ul>
+      <li>2025‑10‑09: Initial companion covering patent alignment and use cases.</li>
+    </ul>
+  </section>
+</body>
+</html>
+
+

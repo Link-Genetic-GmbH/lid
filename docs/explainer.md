@@ -17,7 +17,7 @@ Existing persistent identifier systems (e.g., DOI, Handle, ARK) address some of 
 ## Goals
 
 * Provide a **universal, Web-native identifier** that guarantees resolution even if the original resource moves or changes.
-* Offer a **simple syntax** (e.g., `lid:` scheme or HTTP-based `https://w3id.org/linkid/...`).
+* Offer a **simple syntax** (e.g., `linkid:` scheme or HTTP-based `https://w3id.org/linkid/...`).
 * Enable **resolvers** that map stable identifiers to current destinations using open, semantic, and AI-supported methods.
 * Ensure compatibility with existing Web infrastructure (HTTP, DNS, browsers, archives).
 * Support **sustainability claims** by quantifying avoided re-searching and duplication.
@@ -36,7 +36,7 @@ Existing persistent identifier systems (e.g., DOI, Handle, ARK) address some of 
 
 * **Identifier Syntax**:
 
-  * Option A: new URI scheme `lid:<UUID or hash>`
+  * Option A: new URI scheme `linkid:<UUID or hash>`
   * Option B: HTTP namespace `https://w3id.org/linkid/<UUID>`
 * **Resolver Module**:
 
@@ -70,7 +70,7 @@ Existing persistent identifier systems (e.g., DOI, Handle, ARK) address some of 
 
 ## Stakeholders & Adoption
 
-* **Browsers**: optional native resolution for `lid:` scheme.
+* **Browsers**: optional native resolution for `linkid:` scheme.
 * **Content creators**: embed `LinkIDs` in documents, PDFs, websites.
 * **Libraries & archives**: align with DOI, ARK, Handle communities.
 * **Industry & governments**: ensure long-term referenceability of policies, contracts, knowledge bases.

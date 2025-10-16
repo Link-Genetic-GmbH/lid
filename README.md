@@ -1,4 +1,4 @@
-# LinkID (`lid:`) — Persistent, Never-Break Identifiers for the Web
+# LinkID (`linkid:`) — Persistent, Never-Break Identifiers for the Web
 
 [![Spec Status](https://img.shields.io/badge/status-Community%20Draft-blue)](https://linkgenetic.github.io/lid/spec/)
 [![CI](https://github.com/Link-Genetic-GmbH/lid/actions/workflows/build.yml/badge.svg)](https://github.com/Link-Genetic-GmbH/lid/actions)
@@ -7,12 +7,12 @@
 
 ## 🌍 Overview
 
-**LinkID** (`lid:`) is a proposal for a **W3C/IETF standard** to provide *never-break* identifiers on the Web.  
+**LinkID** (`linkid:`) is a proposal for a **W3C/IETF standard** to provide *never-break* identifiers on the Web.  
 It complements existing systems (DOI, ARK, Handle) but is designed for general use across documents, websites, and archives.
 
 - Stable IDs even if resources move or change
 - Resolver algorithm with semantic/AI support
-- HTTP-based form (`https://w3id.org/linkid/...`) and optional `lid:` scheme
+- HTTP-based form (`https://w3id.org/linkid/...`) and optional `linkid:` scheme
 - Open ecosystem: reference resolvers, client SDKs, tests
 
 ---
@@ -30,13 +30,13 @@ and how it complements existing persistent identifier systems like DOI, ARK, or 
 
 ## 📄 IETF Draft
 
-The current Internet-Draft for the proposed `lid:` URI scheme is
-maintained in [`/draft/draft-linkgenetic-lid-uri-00.md`](draft/draft-linkgenetic-lid-uri-00.md).
+The current Internet-Draft for the proposed `linkid:` URI scheme is
+maintained in [`/draft/draft-linkgenetic-linkid-uri-00.md`](draft/draft-linkgenetic-linkid-uri-00.md).
 
 You can also convert it using [IETF Author Tools](https://author-tools.ietf.org/).
 
 This folder contains Internet-Draft source files for the proposed
-`lid:` URI scheme.
+`linkid:` URI scheme.
 
 ## Why does the header look strange?
 
@@ -52,6 +52,12 @@ IETF [kramdown-rfc](https://github.com/cabo/kramdown-rfc) toolchain.
 The Editor’s Draft is maintained in [`/spec/index.html`](spec/index.html).
 
 ➡️ For a human-friendly introduction, please see the [Explainer](docs/explainer.md).
+
+---
+
+## 📝 Change Log
+
+- 2025-10-16: Renamed proposed URI scheme from `lid:` to `linkid:` to avoid IANA collision.
 
 
 ---

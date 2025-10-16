@@ -203,7 +203,7 @@ This document summarizes the complete implementation of Link Genetics' LinkID so
 4. **Standards adoption** through W3C and IETF processes
 
 ### Long-term (1-3 years)
-1. **Browser integration** for native lid: URI support
+1. **Browser integration** for native linkid: URI support
 2. **Global federation** of resolver networks
 3. **AI enhancement** for semantic resolution
 4. **Sustainability certification** and carbon offset programs

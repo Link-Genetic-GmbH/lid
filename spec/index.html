@@ -29,7 +29,7 @@
 </head>
 <body>
   <section id="abstract">
-    <p><dfn data-lt="LinkID">LinkID</dfn> defines a persistent identifier and resolution mechanism for Web resources that remain stable even when the underlying locations change. It specifies identifier syntax, a resolver algorithm, metadata, caching semantics, and security and privacy requirements. LinkID can be expressed as an HTTP URI namespace (<code>https://w3id.org/linkid/&lt;id&gt;</code>) and, if standardized in the IETF, an optional <code>lid:</code> URI scheme.</p>
+    <p><dfn data-lt="LinkID">LinkID</dfn> defines a persistent identifier and resolution mechanism for Web resources that remain stable even when the underlying locations change. It specifies identifier syntax, a resolver algorithm, metadata, caching semantics, and security and privacy requirements. LinkID can be expressed as an HTTP URI namespace (<code>https://w3id.org/linkid/&lt;id&gt;</code>) and, if standardized in the IETF, an optional <code>linkid:</code> URI scheme.</p>
   </section>
 
   <section id="sotd">
@@ -83,17 +83,17 @@
       <h3>HTTP Form (Recommended)</h3>
       <p>A LinkID is represented as an HTTPS URI under a persistent namespace, e.g.,</p>
       <pre><code>https://w3id.org/linkid/{id}
-https://example.org/lid/{id}</code></pre>
+https://example.org/linkid/{id}</code></pre>
       <p>where <code>{id}</code> is a case‑insensitive, URL‑safe string of 32–64 characters, typically a UUID (lowercase, no dashes), a cryptographic hash, or a registry‑assigned opaque identifier.</p>
       <p>Resolvers SHOULD publish <code>/.well-known/linkid</code> to declare their resolution base and keys. The canonical JSON representation of a LinkID uses media type <code>application/linkid+json</code> (see “IANA Considerations”).</p>
     </section>
     <section>
-      <h3>Optional <code>lid:</code> Scheme</h3>
+      <h3>Optional <code>linkid:</code> Scheme</h3>
       <p>If standardized via IETF and registered with IANA, LinkID MAY be expressed as:</p>
-      <pre><code>lid:{id}
-lid:{id}?q=...
+      <pre><code>linkid:{id}
+linkid:{id}?q=...
 </code></pre>
-      <p>where URI scheme conformance and percent‑encoding follow <a data-cite="RFC3986">RFC 3986</a>. A <code>lid:</code> URI resolves via <a>LinkID Resolution</a> using a discovery step (e.g., well‑known, HTTPS bootstrap, or DNS SRV). If the <code>lid:</code> scheme proceeds, an IANA URI Scheme registration is REQUIRED (see “IANA Considerations”).</p>
+      <p>where URI scheme conformance and percent‑encoding follow <a data-cite="RFC3986">RFC 3986</a>. A <code>linkid:</code> URI resolves via <a>LinkID Resolution</a> using a discovery step (e.g., well‑known, HTTPS bootstrap, or DNS SRV). If the <code>linkid:</code> scheme proceeds, an IANA URI Scheme registration is REQUIRED (see “IANA Considerations”).</p>
       <div class="issue">Open: finalize <code>{id}</code> length/charset and collision‑resistance requirements; align with URI scheme registration if pursued.</div>
     </section>
   </section>
@@ -156,7 +156,7 @@ lid:{id}?q=...
 Result: A redirect to the best current resource, or a JSON description
 
 1. Normalize L
-   1.1 If L is in lid: form, bootstrap to an HTTPS resolver endpoint E via:
+   1.1 If L is in linkid: form, bootstrap to an HTTPS resolver endpoint E via:
        a) well‑known: https://{authority}/.well-known/linkid
        b) or static mapping table maintained by the client (MUST be updateable)
        c) or DNS discovery (e.g., _linkid._tcp)
@@ -365,7 +365,7 @@ Content-Type: application/problem+json
     <ul>
       <li><strong>Media Type:</strong> Register <code>application/linkid+json</code> under the IANA Media Types registry. Security considerations: documents may be signed; do not assume confidentiality.</li>
       <li><strong>Well‑Known URI:</strong> Register <code>linkid</code> in the Well-Known URI registry (<a data-cite="RFC8615">RFC&nbsp;8615</a>) pointing to a JSON document describing resolver capabilities.</li>
-      <li><strong>URI Scheme (Optional):</strong> If pursued, register <code>lid</code> in the URI Schemes registry with resolution via HTTPS bootstrap.</li>
+      <li><strong>URI Scheme (Optional):</strong> If pursued, register <code>linkid</code> in the URI Schemes registry with resolution via HTTPS bootstrap.</li>
       <li><strong>Problem Types:</strong> Optionally register <code>https://linkid.org/problems/*</code> identifiers for common error conditions.</li>
     </ul>
   </section>
@@ -456,8 +456,8 @@ Content-Type: application/problem+json
 https://w3id.org/linkid/b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14
 → 308 Permanent Redirect → https://content.example.org/v/3/paper.pdf
 
-// lid: form (if registered)
-lid:b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14
+// linkid: form (if registered)
+linkid:b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14
 → discover resolver → redirect
 
 // JSON resolution
@@ -473,6 +473,7 @@ Accept: application/linkid+json
     <ul>
       <li>2025‑09‑16: Initial Editor’s Draft skeleton with normative resolution algorithm.</li>
       <li>2025‑10‑07: Expanded standardization details, extended HTTP API + webhooks, repository/tracking integration, and examples.</li>
+      <li>2025‑10‑16: Rename proposed URI scheme from <code>lid:</code> to <code>linkid:</code> to avoid IANA collision.</li>
     </ul>
   </section>
 </body>

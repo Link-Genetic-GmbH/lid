@@ -176,7 +176,7 @@ The test suite validates compliance with:
 - **RFC 3986**: URI Generic Syntax
 - **RFC 7595**: URI Scheme Registration
 - **W3C LinkID Specification**: Core specification
-- **IETF Internet-Draft**: lid: URI scheme
+- **IETF Internet-Draft**: linkid: URI scheme
 
 ### Compliance Report
 Run `npm run test:compliance` to generate a detailed compliance report showing which requirements are tested and validated.

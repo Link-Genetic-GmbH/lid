@@ -28,21 +28,14 @@ and how it complements existing persistent identifier systems like DOI, ARK, or 
 ---
 
 
-## 📄 IETF Draft
+## 📄 IANA / IETF Draft
 
-The current Internet-Draft for the proposed `lid:` URI scheme is
-maintained in [`/draft/draft-linkgenetic-lid-uri-00.md`](draft/draft-linkgenetic-lid-uri-00.md).
+The current Internet-Draft for the proposed `linkid:` URI scheme is https://www.iana.org/assignments/uri-schemes/prov/linkid.
 
-You can also convert it using [IETF Author Tools](https://author-tools.ietf.org/).
+Maintained in [`/draft/draft-linkgenetic-lid-uri-00.md`](draft/draft-linkgenetic-lid-uri-00.md).
 
 This folder contains Internet-Draft source files for the proposed
-`lid:` URI scheme.
-
-## Why does the header look strange?
-
-The draft files (e.g. `draft-linkgenetic-lid-uri-00.md`) use a
-**YAML front-matter header** (`--- ... ---`) that is required by the
-IETF [kramdown-rfc](https://github.com/cabo/kramdown-rfc) toolchain.
+`linkid:` URI scheme.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
-title: The LinkID (lid) URI Scheme
+title: The LinkID (linkid) URI Scheme
 abbrev: LinkID URI
-docname: draft-linkgenetic-lid-uri-00
+docname: draft-linkgenetic-linkid-uri-00
 category: std
 ipr: trust200902
 area: ART
@@ -18,7 +18,7 @@ author:
 
 # Abstract
 
-This document defines the `lid` URI scheme, a persistent identifier
+This document defines the `linkid` URI scheme, a persistent identifier
 for Web resources that resolves through HTTPS-based resolvers.
 It is intended as a general-purpose complement to existing identifier
 systems such as DOI, Handle, and ARK, enabling stable linking across
@@ -37,7 +37,7 @@ Handle, and ARK. However, their adoption is mostly limited to
 specific communities (e.g., academic publishing, libraries). The Web
 as a whole lacks a universal, Web-native persistent identifier scheme.
 
-The `lid` URI scheme aims to fill this gap by providing stable,
+The `linkid` URI scheme aims to fill this gap by providing stable,
 location-independent identifiers that always resolve to the current
 best representation of a resource.
 
@@ -51,9 +51,9 @@ all capitals, as shown here.
 
 This document uses the following terms:
 
-- **LinkID (lid)**: A persistent, location-independent identifier
+- **LinkID (linkid)**: A persistent, location-independent identifier
   assigned to a resource.
-- **Client**: Software that dereferences a `lid:` URI.
+- **Client**: Software that dereferences a `linkid:` URI.
 - **Resolver**: An HTTPS service that maps a LinkID to one or more
   current resource representations or redirect targets.
 - **Registry**: An authority that issues LinkIDs and curates resolution
@@ -488,20 +488,20 @@ Additionally, resolvers SHOULD:
 
 # IANA Considerations
 
-IANA is requested to register the `lid` URI scheme in the
+IANA is requested to register the `linkid` URI scheme in the
 “Uniform Resource Identifier (URI) Schemes” registry in accordance
 with RFC 7595.
 
 ## URI Scheme Registration Template
 
-- **Scheme name:** `lid`  
+- **Scheme name:** `linkid`  
 - **Status:** Permanent  
 - **Applications/protocols that use this scheme name:** LinkID for
   persistent identifiers, resolved via HTTPS.  
 - **Contact:** Link Genetic GmbH <info@linkgenetic.com>  
 - **Change controller:** IETF  
 - **References:** This document, RFC3986, RFC7595  
-- **Syntax:** `lid:<id>[?<parameters>]`  
+- **Syntax:** `linkid:<id>[?<parameters>]`  
 - **Semantics:** Persistent, location-independent identifiers resolved
   via HTTPS.  
 - **Encoding considerations:** URL-safe characters, percent-encoding
@@ -511,8 +511,8 @@ with RFC 7595.
 - **Security considerations:** HTTPS, signatures, anti-phishing.  
 - **Privacy considerations:** No personal data, opaque IDs.  
 - **Examples:**  
-  - `lid:b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14`  
-  - `lid:b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14?format=pdf&lang=en`
+  - `linkid:b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14`  
+  - `linkid:b2f6f0d7c7d34e3e8a4f0a6b2a9c9f14?format=pdf&lang=en`
 
 ## Well-Known URI Registration
 
@@ -539,7 +539,7 @@ IANA is requested to register the `application/linkid+json` media type:
 - **Applications that use this media type:** LinkID resolvers and
   clients  
 - **Fragment identifier considerations:** As per [RFC6901] if used  
-- **Additional information:** File extension: `.lid.json` (optional)  
+- **Additional information:** File extension: `.linkid.json` (optional)  
 - **Person & email address to contact for further information:** Link
   Genetic GmbH <info@linkgenetic.com>  
 - **Intended usage:** Common  

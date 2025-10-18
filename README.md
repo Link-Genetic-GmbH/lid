@@ -1,18 +1,18 @@
-# LinkID (`lid:`) — Persistent, Never-Break Identifiers for the Web
+# LinkID (`linkid:`) — Persistent, Never-Break Identifiers for the Web
 
-[![Spec Status](https://img.shields.io/badge/status-Community%20Draft-blue)](https://linkgenetic.github.io/lid/spec/)
-[![CI](https://github.com/Link-Genetic-GmbH/lid/actions/workflows/build.yml/badge.svg)](https://github.com/Link-Genetic-GmbH/lid/actions)
+[![Spec Status](https://img.shields.io/badge/status-Community%20Draft-blue)](https://linkgenetic.github.io/linkid/spec/)
+[![CI](https://github.com/Link-Genetic-GmbH/linkid/actions/workflows/build.yml/badge.svg)](https://github.com/Link-Genetic-GmbH/linkid/actions)
 
 ---
 
 ## 🌍 Overview
 
-**LinkID** (`lid:`) is a proposal for a **W3C/IETF standard** to provide *never-break* identifiers on the Web.  
+**LinkID** (`linkid:`) is a proposal for a **W3C/IETF standard** to provide *never-break* identifiers on the Web.  
 It complements existing systems (DOI, ARK, Handle) but is designed for general use across documents, websites, and archives.
 
 - Stable IDs even if resources move or change
 - Resolver algorithm with semantic/AI support
-- HTTP-based form (`https://w3id.org/linkid/...`) and optional `lid:` scheme
+- HTTP-based form (`https://w3id.org/linkid/...`) and optional `linkid:` scheme
 - Open ecosystem: reference resolvers, client SDKs, tests
 
 ---
@@ -32,7 +32,7 @@ and how it complements existing persistent identifier systems like DOI, ARK, or 
 
 The current Internet-Draft for the proposed `linkid:` URI scheme is https://www.iana.org/assignments/uri-schemes/prov/linkid.
 
-Maintained in [`/draft/draft-linkgenetic-lid-uri-00.md`](draft/draft-linkgenetic-lid-uri-00.md).
+Maintained in [`/draft/draft-linkgenetic-linkid-uri-00.md`](draft/draft-linkgenetic-linkid-uri-00.md).
 
 This folder contains Internet-Draft source files for the proposed
 `linkid:` URI scheme.

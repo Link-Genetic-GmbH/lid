@@ -15,6 +15,8 @@ It complements existing systems (DOI, ARK, Handle) but is designed for general u
 - HTTP-based form (`https://w3id.org/linkid/...`) and optional `linkid:` scheme
 - Open ecosystem: reference resolvers, client SDKs, tests
 
+A Web Incubator CG (WICG) Proposal "Link Genetic Identifier (LINKID) – Persistent, Self-Healing Web Links #238" has beeen created under https://github.com/WICG/proposals/issues/238.
+
 ---
 
 ## 📖 Explainer

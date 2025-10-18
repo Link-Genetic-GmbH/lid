@@ -477,7 +477,7 @@ with RFC 7595.
 ## URI Scheme Registration Template
 
 - **Scheme name:** `linkid`  
-- **Status:** Permanent  
+- **Status:** Provisional  
 - **Applications/protocols that use this scheme name:** LinkID for
   persistent identifiers, resolved via HTTPS.  
 - **Contact:** Link Genetic GmbH <info@linkgenetic.com>  
@@ -503,7 +503,7 @@ IANA is requested to register the following well-known URI per [RFC8615]:
 - **URI suffix:** `linkid-resolver`  
 - **Change controller:** IETF  
 - **Specification document:** This document  
-- **Status:** Permanent  
+- **Status:** Provisional  
 
 ## Media Type Registration
 

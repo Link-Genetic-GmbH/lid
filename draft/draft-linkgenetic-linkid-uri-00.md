@@ -1,21 +1,3 @@
----
-title: The LinkID (linkid) URI Scheme
-abbrev: LinkID URI
-docname: draft-linkgenetic-linkid-uri-00
-category: std
-ipr: trust200902
-area: ART
-workgroup: ARTAREA
-keyword: [URI, Persistent Identifier, Web, IANA, LinkID]
-date: 2025-09-18
-
-author:
-- name: Christian Nyffenegger
-  org: Link Genetic GmbH
-  email: info@linkgenetic.com
-  country: CH
----
-
 # Abstract
 
 This document defines the `linkid` URI scheme, a persistent identifier
@@ -77,10 +59,10 @@ This document uses the following terms:
 
 # URI Scheme Definition
 
-The `lid` URI has the following syntax:
+The `linkid` URI has the following syntax:
 
 ```
-lid:<id>[?<parameters>]
+linkid:<id>[?<parameters>]
 ```
 
 Where:
@@ -93,15 +75,15 @@ Where:
 
 ## Syntax (ABNF)
 
-The `lid` URI syntax is formally defined using ABNF as per [RFC5234]
+The `linkid` URI syntax is formally defined using ABNF as per [RFC5234]
 and [RFC3986]:
 
 ```
-lid-URI     = "lid:" lid-id [ "?" lid-params ]
-lid-id      = 1*( lid-unreserved / pct-encoded )
-lid-unreserved = ALPHA / DIGIT / "." / "_" / "~" / "-"
+linkid-URI     = "linkid:" linkid-id [ "?" linkid-params ]
+linkid-id      = 1*( linkid-unreserved / pct-encoded )
+linkid-unreserved = ALPHA / DIGIT / "." / "_" / "~" / "-"
 
-lid-params  = param *( "&" param )
+linkid-params  = param *( "&" param )
 param       = pname [ "=" pvalue ]
 pname       = 1*( pchar )
 pvalue      = *pchar
@@ -123,7 +105,7 @@ Notes:
 
 ## Parsing, Normalization, and Comparison
 
-- The scheme `lid` is case-insensitive; it SHOULD be rendered in
+- The scheme `linkid` is case-insensitive; it SHOULD be rendered in
   lowercase.
 - The `<id>` component is treated as an opaque, case-sensitive string.
   Registries MAY impose additional constraints; clients MUST NOT.
@@ -131,7 +113,7 @@ Notes:
   remove unnecessary percent-encoding for unreserved characters.
 - Parameters used for content negotiation (e.g., `format`, `lang`,
   `profile`, `version`) do not change the identity of the LinkID; they
-  influence resolution outcomes. Equality of two `lid:` URIs is
+  influence resolution outcomes. Equality of two `linkid:` URIs is
   determined solely by the scheme and `<id>` after normalization.
 - Parameter ordering is not significant; duplicate parameter names MUST
   be processed by taking the first occurrence and ignoring subsequent
@@ -442,7 +424,7 @@ A conforming client:
 
 # Interoperability
 
-The `lid` scheme is designed to interoperate with existing Web
+The `linkid` scheme is designed to interoperate with existing Web
 infrastructure (HTTP, DNS, CDNs, archives). It can coexist with DOI,
 Handle, and ARK identifiers by cross-referencing or embedding them as
 alternate resolution records.

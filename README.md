@@ -41,6 +41,38 @@ This folder contains Internet-Draft source files for the proposed
 
 ---
 
+# Open-Source Statement – LinkID Persistent Identifier
+
+**Status:** Patent Pending (P220889) • © 2025 Link Genetic GmbH • Switzerland  
+**License:** Apache 2.0 (Open-Source Core)
+
+
+## 🔍 What is LinkID?
+LinkID is a persistent, bidirectional, and AI-resilient hyperlink system that ensures links never break.  
+Each `linkid:` connects a **source** and **target** resource, guaranteeing long-term traceability, auditability, and data integrity.
+
+Learn more on our [Open-Source Initiative Page →](./docs/open-source.md)
+
+
+## 🌍 Mission
+To build an **Unbroken Web** where information remains accessible, trustworthy, and sustainable.
+
+> Stay Unbroken. The Future Is Unbroken and Trustful.
+
+
+## 📜 License
+This repository contains the open-source reference implementation of the LinkID Persistent Identifier.  
+Published under the [Apache 2.0 License](./LICENSE).  
+Patent pending – see P220889.
+
+
+## 🤝 Contributing
+Contributions are welcome!  
+Please read our [Contribution Guide](./CONTRIBUTING.md) and [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+
+---
+
 
 ## 📖 Specification
 

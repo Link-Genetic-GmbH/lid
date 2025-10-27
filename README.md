@@ -62,8 +62,7 @@ To build an **Unbroken Web** where information remains accessible, trustworthy, 
 
 ## 📜 License
 This repository contains the open-source reference implementation of the LinkID Persistent Identifier.  
-Published under the [Apache 2.0 License](./LICENSE).  
-Patent pending – see P220889.
+Published under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 
 ## 🤝 Contributing

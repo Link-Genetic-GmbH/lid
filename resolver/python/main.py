@@ -27,6 +27,7 @@ from services.registry_service import RegistryService
 from services.auth_service import AuthService
 from models import LinkIDRecord, ResolutionRequest, RegistrationRequest
 from config import settings
+from seed import load_seed
 
 # Configure structured logging
 structlog.configure(
@@ -100,6 +101,14 @@ async def lifespan(app: FastAPI):
     # Connect to databases
     await registry_service.connect()
     await cache_service.connect()
+
+    # Optional: load seed data when configured
+    if settings.seed_file:
+        try:
+            created_ids = await load_seed(registry_service, settings.seed_file)
+            logger.info("Seed loaded", count=len(created_ids))
+        except Exception as e:
+            logger.error("Seed load failed", error=str(e))
 
     logger.info("LinkID Resolver started successfully")
 

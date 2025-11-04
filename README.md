@@ -120,3 +120,38 @@ Tests live under [`/tests`](tests/).
 We aim to provide **two independent implementations** and **Web Platform Tests (WPT)** for conformance.
 
 ---
+
+## 🚦 Demo Quickstart (Python Resolver)
+
+Run locally with Docker:
+
+```bash
+docker compose up --build
+# http://localhost:8080/health
+```
+
+Or run directly (requires Python 3.11+):
+
+```bash
+make run
+# loads resolver/python/seed.json at startup
+```
+
+Demo runbook (scripted):
+
+```bash
+bash demo/demo.sh
+```
+
+Postman: import `demo/LinkID.postman_collection.json` and set variables:
+- baseUrl: http://localhost:8080
+- token: demo
+
+Endpoints:
+- `GET /.well-known/linkid-resolver` — discovery
+- `GET /resolve/{id}` — redirect
+- `GET /resolve/{id}?metadata=true` — metadata JSON
+- `POST /register` — requires `Authorization: Bearer demo`
+- `PUT /resolve/{id}` — requires auth
+- `DELETE /resolve/{id}` — requires auth
+

@@ -84,3 +84,30 @@ Existing persistent identifier systems (e.g., DOI, Handle, ARK) address some of 
 * [RFC 3986 – Uniform Resource Identifier (URI): Generic Syntax](https://www.rfc-editor.org/rfc/rfc3986)
 * [RFC 7595 – Guidelines and Registration Procedures for URI Schemes](https://www.rfc-editor.org/rfc/rfc7595)
 * [w3id.org Permanent Identifier Community Group](https://w3id.org/)
+
+---
+
+## Conference Session Overview
+
+Broken links threaten the long-term integrity and trustworthiness of the Web.
+
+The Link Genetic initiative introduces “LinkID”, a persistent, bidirectional identifier scheme designed to ensure link resilience, metadata preservation, and semantic interoperability across domains and over time.
+
+This session invites W3C members to discuss the feasibility of a new `linkid:` URI scheme, alignment with existing identifier systems (DOI, ARK, UUID), and next steps toward standardisation.
+
+We plan to:
+
+- Identify potential Working Groups or Community Groups interested in hosting a LinkID proposal.
+- Discuss governance, persistence, and interoperability models for resilient linking.
+- Outline a roadmap for open-source reference implementation and metadata framework.
+
+Goal(s): Gather feedback from W3C TAG, URI, and Web Architecture communities on the LinkID concept.
+
+Agenda:
+
+1. Introduction to Link Genetic & LinkID (5 min)
+2. Challenges of link persistence and metadata loss (10 min)
+3. Overview of the LinkID proposal and URI scheme draft (15 min)
+4. Discussion: interoperability with DOI/ARK/UUID (20 min)
+5. Next steps and standardisation pathways (10 min)
+

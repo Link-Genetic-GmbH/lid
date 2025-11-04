@@ -1,0 +1,24 @@
+[
+  {
+    "target_uri": "https://example.org/resource/normal",
+    "media_type": "text/html",
+    "language": "en",
+    "metadata": {"title": "Normal record"}
+  },
+  {
+    "target_uri": "https://example.org/resource/withdrawn",
+    "media_type": "application/pdf",
+    "language": "en",
+    "metadata": {"title": "Withdrawn record"},
+    "withdrawn": true,
+    "withdrawal_reason": "Withdrawn by owner"
+  },
+  {
+    "targetUri": "https://example.org/resource/multilingual",
+    "mediaType": "text/html",
+    "language": "fr",
+    "metadata": {"title": "Multilingual/format variant", "variants": ["html", "pdf"]}
+  }
+]
+
+

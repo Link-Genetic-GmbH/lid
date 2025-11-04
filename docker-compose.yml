@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  linkid-resolver:
+    build: ./resolver/python
+    image: linkid/resolver-python:demo
+    container_name: linkid-resolver
+    ports:
+      - "8080:8080"
+    environment:
+      - LINKID_ENV=${LINKID_ENV}
+      - LINKID_HOST=0.0.0.0
+      - LINKID_PORT=${LINKID_PORT}
+      - LINKID_LOG_LEVEL=${LINKID_LOG_LEVEL}
+      - LINKID_SEED_FILE=${LINKID_SEED_FILE}
+    restart: unless-stopped
+
+

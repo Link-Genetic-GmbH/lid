@@ -1,0 +1,11 @@
+{
+  "status": "healthy",
+  "timestamp": 1700000000,
+  "version": "1.0.0",
+  "services": {
+    "registry": true,
+    "cache": true
+  }
+}
+
+

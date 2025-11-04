@@ -1,0 +1,30 @@
+{
+  "resolver": {
+    "version": "1.0",
+    "endpoints": {
+      "resolve": "http://localhost:8080/resolve/{id}",
+      "register": "http://localhost:8080/register",
+      "update": "http://localhost:8080/resolve/{id}",
+      "withdraw": "http://localhost:8080/resolve/{id}"
+    },
+    "capabilities": [
+      "content-negotiation",
+      "caching",
+      "authentication",
+      "rate-limiting",
+      "federation",
+      "semantic-resolution"
+    ],
+    "supportedFormats": [
+      "application/linkid+json",
+      "application/json",
+      "text/html"
+    ],
+    "rateLimits": {
+      "perMinute": 600,
+      "perHour": 3600
+    }
+  }
+}
+
+

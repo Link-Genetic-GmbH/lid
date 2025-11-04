@@ -1,0 +1,67 @@
+{
+  "info": {
+    "name": "LinkID Demo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {"method": "GET", "url": "{{baseUrl}}/health"}
+    },
+    {
+      "name": "Well-known",
+      "request": {"method": "GET", "url": "{{baseUrl}}/.well-known/linkid-resolver"}
+    },
+    {
+      "name": "Resolve Redirect",
+      "request": {"method": "GET", "url": "{{baseUrl}}/resolve/{{linkId}}"}
+    },
+    {
+      "name": "Resolve Metadata",
+      "request": {"method": "GET", "url": "{{baseUrl}}/resolve/{{linkId}}?metadata=true"}
+    },
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+        "url": "{{baseUrl}}/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"targetUri\": \"https://example.org/resource\",\n  \"mediaType\": \"text/html\",\n  \"language\": \"en\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Update",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+        "url": "{{baseUrl}}/resolve/{{linkId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"targetUri\": \"https://example.org/new\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Withdraw",
+      "request": {
+        "method": "DELETE",
+        "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+        "url": "{{baseUrl}}/resolve/{{linkId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"owner request\"\n}"
+        }
+      }
+    }
+  ],
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8080"},
+    {"key": "token", "value": "demo"},
+    {"key": "linkId", "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"}
+  ]
+}
+
+
